@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Time Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Time Tracker</h1>
+
+  <div id="display">00:00:00</div>
+
+  <div class="buttons">
+    <button class="start" onclick="start()">Başla</button>
+    <button class="stop" onclick="stop()">Dayan</button>
+    <button class="reset" onclick="reset()">Sıfırla</button>
+  </div>
+
+  <!-- Məlumatları sil düyməsi düymələrin altında -->
+  <div class="buttons">
+    <button class="clear" onclick="clearHistory()">Məlumatları Sil</button>
+  </div>
+
+  <div id="daily"></div>
+
+ <div id="total30">Son 30 gün: 00:00:00</div>
+
+  <table id="history">
+    <tr>
+      <th>Tarix</th>
+      <th>Ümumi vaxt</th>
+    </tr>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
