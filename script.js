@@ -1,9 +1,9 @@
+let startTime;
 let timer;
-let seconds = 0;
 let isRunning = false;
 let today = new Date().toLocaleDateString("az-AZ");
 
-// localStorage-dan oxu
+// localStorage oxu
 let dailyData = JSON.parse(localStorage.getItem("dersVaxti")) || {};
 let dailySeconds = dailyData[today] || 0;
 
@@ -14,7 +14,7 @@ function formatTime(totalSeconds) {
   return `${hrs}:${mins}:${secs}`;
 }
 
-function updateDisplay() {
+function updateDisplay(seconds) {
   document.getElementById("display").innerText = formatTime(seconds);
 }
 
@@ -26,12 +26,13 @@ function updateDaily() {
 function start() {
   if (!isRunning) {
     isRunning = true;
+    startTime = Date.now() - (dailySeconds * 1000); // əvvəlki vaxtı nəzərə al
     timer = setInterval(() => {
-      seconds++;
-      dailySeconds++;
-      updateDisplay();
+      let now = Date.now();
+      dailySeconds = Math.floor((now - startTime) / 1000);
+      updateDisplay(dailySeconds);
       updateDaily();
-    }, 1000);
+    }, 500); // hər yarım saniyədən bir yenilə
   }
 }
 
@@ -44,8 +45,9 @@ function stop() {
 
 function reset() {
   stop();
-  seconds = 0;
-  updateDisplay();
+  dailySeconds = 0;
+  updateDisplay(0);
+  updateDaily();
 }
 
 function saveData() {
@@ -81,18 +83,17 @@ function renderHistory() {
 }
 
 function clearHistory() {
-  if (confirm("Son 30 günün məlumatlarını silmək istədiyinizə əminsiniz?")) {
+  if (confirm("Bütün məlumatları silmək istədiyinizə əminsiniz?")) {
     dailyData = {};
     localStorage.removeItem("dersVaxti");
     dailySeconds = 0;
-    seconds = 0;
-    updateDisplay();
+    updateDisplay(0);
     updateDaily();
     renderHistory();
   }
 }
 
 // İlk açılış
-updateDisplay();
+updateDisplay(dailySeconds);
 updateDaily();
 renderHistory();
