@@ -79,7 +79,7 @@ function renderHistory() {
   });
 
   document.getElementById("total30").innerText =
-    "Son 30 gün: " + formatTime(totalSeconds30);
+    "Bütün günlər: " + formatTime(totalSeconds30);
 }
 
 function clearHistory() {
@@ -97,3 +97,4 @@ function clearHistory() {
 updateDisplay(dailySeconds);
 updateDaily();
 renderHistory();
+
