@@ -12,5 +12,5 @@ Brauzerdəki `localStorage` sayəsində məlumat saxlanılır — səhifəni ba�
 - ✅ Bütün günlərin statistikası cədvəl şəklində  
 - ✅ Məlumatları tam silmək üçün ayrıca düymə 
 
----
+--- 
 
