@@ -8,7 +8,7 @@ Tətbiq **brauzerin localStorage** mexanizmi ilə işlədiyi üçün:
 - brauzer bağlansa da  
 məlumatlar **itmir**.
 
----
+--- 
 
 ## ✨ Xüsusiyyətlər
 
