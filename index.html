@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Time Tracker</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan Time Tracker</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Time Tracker</h1>
 
-  <div id="display">00:00:00</div>
+<h1>Plan Time Tracker</h1>
 
-  <div class="buttons">
-    <button class="start" onclick="start()">Başla</button>
-    <button class="stop" onclick="stop()">Dayan</button>
-    <button class="reset" onclick="reset()">Sıfırla</button>
+<!-- SAAT -->
+<div id="display">00:00:00</div>
+<div id="daily">Bu gün: 00:00:00</div>
+
+<!-- BUTTONS -->
+<div class="buttons">
+  <button class="start" id="startBtn">Başla</button>
+  <button class="stop" id="stopBtn">Dayan</button>
+  <button class="reset" id="resetBtn">Bu günü sıfırla</button>
+</div>
+
+<!-- AKTİV PLAN + PLUS (PLANLARIN ÜSTÜNDƏ, MƏRKƏZDƏ) -->
+<div class="activePlanWrapper">
+  <div class="activePlan">
+    <small>Aktiv plan</small>
+    <div id="activeName">Heç biri</div>
   </div>
+  <button id="addPlanBtn" class="plusBtn">+</button>
+</div>
 
-  <!-- Məlumatları sil düyməsi düymələrin altında -->
-  <div class="buttons">
-    <button class="clear" onclick="clearHistory()">Məlumatları Sil</button>
-  </div>
+<!-- PLANLAR -->
+<h2>Planlar</h2>
+<div id="plans"></div>
 
-  <div id="daily"></div>
+<!-- TARİXÇƏ -->
+<h2>Tarixçə</h2>
+<table id="history">
+  <tr>
+    <th>Tarix</th>
+    <th>Ümumi vaxt</th>
+  </tr>
+</table>
 
- <div id="total30">Bütün günlər: 00:00:00</div>
+<div class="danger">
+  <button id="clearAll">Bütün məlumatları sil</button>
+</div>
 
-  <table id="history">
-    <tr>
-      <th>Tarix</th>
-      <th>Ümumi vaxt</th>
-    </tr>
-  </table>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
-

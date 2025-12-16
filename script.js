@@ -1,100 +1,178 @@
-let startTime;
-let timer;
-let isRunning = false;
-let today = new Date().toLocaleDateString("az-AZ");
+const KEY = "planTracker_final_clean";
 
-// localStorage oxu
-let dailyData = JSON.parse(localStorage.getItem("dersVaxti")) || {};
-let dailySeconds = dailyData[today] || 0;
+let db = JSON.parse(localStorage.getItem(KEY)) || {
+  plans: {},
+  active: null,
+  running: false,
+  start: null
+};
 
-function formatTime(totalSeconds) {
-  let hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-  let mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-  let secs = String(totalSeconds % 60).padStart(2, '0');
-  return `${hrs}:${mins}:${secs}`;
+let interval = null;
+
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
-function updateDisplay(seconds) {
-  document.getElementById("display").innerText = formatTime(seconds);
+function format(sec) {
+  const h = String(Math.floor(sec/3600)).padStart(2,"0");
+  const m = String(Math.floor((sec%3600)/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  return `${h}:${m}:${s}`;
 }
 
-function updateDaily() {
-  document.getElementById("daily").innerText =
-    `Bu gün: ${formatTime(dailySeconds)}`;
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(db));
 }
 
-function start() {
-  if (!isRunning) {
-    isRunning = true;
-    startTime = Date.now() - (dailySeconds * 1000); // əvvəlki vaxtı nəzərə al
-    timer = setInterval(() => {
-      let now = Date.now();
-      dailySeconds = Math.floor((now - startTime) / 1000);
-      updateDisplay(dailySeconds);
-      updateDaily();
-    }, 500); // hər yarım saniyədən bir yenilə
+function activePlan() {
+  return db.plans[db.active];
+}
+
+function startTimer() {
+  if (!db.active || db.running) return;
+  db.running = true;
+  db.start = Date.now();
+  interval = setInterval(render, 500);
+}
+
+function stopTimer() {
+  if (!db.running) return;
+  const p = activePlan();
+  const t = today();
+  p[t] = (p[t] || 0) + Math.floor((Date.now() - db.start)/1000);
+  db.running = false;
+  db.start = null;
+  clearInterval(interval);
+  save();
+}
+
+function render() {
+  let sec = 0;
+  if (db.active) {
+    const p = activePlan();
+    sec = p[today()] || 0;
+    if (db.running) {
+      sec += Math.floor((Date.now() - db.start)/1000);
+    }
   }
-}
 
-function stop() {
-  isRunning = false;
-  clearInterval(timer);
-  saveData();
+  document.getElementById("display").innerText = format(sec);
+  document.getElementById("daily").innerText = "Bu gün: " + format(sec);
+  document.getElementById("activeName").innerText = db.active ? activePlan().name : "Heç biri";
+
+  renderPlans();
   renderHistory();
 }
 
-function reset() {
-  stop();
-  dailySeconds = 0;
-  updateDisplay(0);
-  updateDaily();
-}
+function renderPlans() {
+  const wrap = document.getElementById("plans");
+  wrap.innerHTML = "";
 
-function saveData() {
-  dailyData[today] = dailySeconds;
-  localStorage.setItem("dersVaxti", JSON.stringify(dailyData));
-}
+  for (const id in db.plans) {
+    const p = db.plans[id];
 
-function renderHistory() {
-  let table = document.getElementById("history");
-  table.innerHTML = `
-    <tr>
-      <th>Tarix</th>
-      <th>Ümumi vaxt</th>
-    </tr>
-  `;
-  let dates = Object.keys(dailyData).sort((a, b) => {
-    let da = new Date(a.split(".").reverse().join("-"));
-    let db = new Date(b.split(".").reverse().join("-"));
-    return db - da;
-  });
+    let todaySec = p[today()] || 0;
+    let sec7 = 0, sec30 = 0;
 
-  let totalSeconds30 = 0;
+    for (const d in p) {
+      if (d === "name") continue;
+      const diff = (new Date(today()) - new Date(d)) / 86400000;
+      if (diff >= 0 && diff < 7) sec7 += p[d];
+      if (diff >= 0 && diff < 30) sec30 += p[d];
+    }
 
-  dates.slice(0, 30).forEach(d => {
-    let row = table.insertRow();
-    row.insertCell(0).innerText = d;
-    row.insertCell(1).innerText = formatTime(dailyData[d]);
-    totalSeconds30 += dailyData[d];
-  });
+    const div = document.createElement("div");
+    div.className = "planItem";
 
-  document.getElementById("total30").innerText =
-    "Bütün günlər: " + formatTime(totalSeconds30);
-}
+    const left = document.createElement("div");
+    left.className = "planLeft";
+    left.innerHTML = `
+      <b>${p.name}${db.active === id ? " •" : ""}</b>
+      <div class="planStats">
+        Bu gün: ${format(todaySec)}
+        &nbsp; 7 gün: ${format(sec7)}
+        &nbsp; 30 gün: ${format(sec30)}
+      </div>
+    `;
 
-function clearHistory() {
-  if (confirm("Bütün məlumatları silmək istədiyinizə əminsiniz?")) {
-    dailyData = {};
-    localStorage.removeItem("dersVaxti");
-    dailySeconds = 0;
-    updateDisplay(0);
-    updateDaily();
-    renderHistory();
+    const btns = document.createElement("div");
+    btns.className = "planBtns";
+
+    const sel = document.createElement("button");
+    sel.className = "select";
+    sel.innerText = "Seç / Başla";
+    sel.onclick = () => {
+      if (db.running) stopTimer();
+      db.active = id;
+      startTimer();
+      save();
+      render();
+    };
+
+    const del = document.createElement("button");
+    del.className = "delete";
+    del.innerText = "Sil";
+    del.onclick = () => {
+      if (confirm("Plan silinsin?")) {
+        if (db.active === id) stopTimer();
+        delete db.plans[id];
+        db.active = null;
+        save();
+        render();
+      }
+    };
+
+    btns.appendChild(sel);
+    btns.appendChild(del);
+
+    div.appendChild(left);
+    div.appendChild(btns);
+    wrap.appendChild(div);
   }
 }
 
-// İlk açılış
-updateDisplay(dailySeconds);
-updateDaily();
-renderHistory();
+function renderHistory() {
+  const table = document.getElementById("history");
+  table.innerHTML = `<tr><th>Tarix</th><th>Ümumi vaxt</th></tr>`;
 
+  const total = {};
+  for (const p of Object.values(db.plans)) {
+    for (const d in p) {
+      if (d === "name") continue;
+      total[d] = (total[d] || 0) + p[d];
+    }
+  }
+
+  Object.keys(total).sort().reverse().forEach(d => {
+    const r = table.insertRow();
+    r.insertCell(0).innerText = d.split("-").reverse().join(".");
+    r.insertCell(1).innerText = format(total[d]);
+  });
+}
+
+document.getElementById("addPlanBtn").onclick = () => {
+  const name = prompt("Plan adı:");
+  if (!name) return;
+  db.plans[Date.now()] = { name };
+  save();
+  render();
+};
+
+document.getElementById("startBtn").onclick = startTimer;
+document.getElementById("stopBtn").onclick = stopTimer;
+document.getElementById("resetBtn").onclick = () => {
+  if (!db.active) return;
+  db.plans[db.active][today()] = 0;
+  save();
+  render();
+};
+
+document.getElementById("clearAll").onclick = () => {
+  if (confirm("Hamısı silinsin?")) {
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+};
+
+render();

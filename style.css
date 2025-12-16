@@ -1,79 +1,149 @@
 body {
   font-family: Arial, sans-serif;
+  background: #eef4ff;
+  margin: 20px;
   text-align: center;
-  margin: 40px;
-  background: #e9f0fb;
-  color: #222;
 }
+
+h1 { margin-bottom: 10px; }
+h2 { margin: 26px 0 12px; }
 
 #display {
   font-size: 56px;
   font-weight: bold;
   background: #fff;
   padding: 20px 40px;
-  border-radius: 12px;
-  margin: 20px auto;
+  border-radius: 14px;
   display: inline-block;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+#daily {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
 .buttons {
   display: flex;
-  gap: 14px;
   justify-content: center;
-  margin: 12px 0;
+  gap: 12px;
+  margin: 14px 0;
 }
 
 button {
   border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 12px 18px;
   border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-  color: #fff;
 }
 
-button:hover { transform: translateY(-2px); }
-button:active { transform: scale(0.95); }
+.start { background: #28a745; color: #fff; }
+.stop { background: #ffc107; }
+.reset { background: #dc3545; color: #fff; }
 
-/* Rənglər */
-button.start { background: #28a745; } /* Yaşıl */
-button.stop  { background: #ffc107; color: #000; } /* Sarı */
-button.reset { background: #dc3545; }   /* Qırmızı */
-button.clear { background: #50494a; }  
-button.clear:hover { background: #0a27e2; }
-
-#daily {
-  font-size: 18px;
-  margin: 15px 0 20px;
-  font-weight: 600;
-  color: #333;
+.activePlanWrapper {
+  max-width: 800px;
+  margin: 24px auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
 }
 
-#total30 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 10px 0 20px;
-  color: #111;
-}
-
-table {
-  margin: 0 auto;
-  border-collapse: collapse;
-  width: clamp(320px, 90vw, 800px);
+.activePlan {
   background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
+  padding: 14px 20px;
+  border-radius: 14px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  min-width: 240px;
 }
 
-th, td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #eee;
+.activePlan small {
+  opacity: 0.7;
+}
+
+#activeName {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.plusBtn {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  color: #fff;
+
+  border-radius: 8px;   /* kvadrat, azca yumru künc */
+  font-size: 28px;
+  font-weight: bold;
+
+  display: flex;        /* + işarəsini mərkəzləmək üçün */
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  line-height: 1;
+}
+
+
+#plans {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.planItem {
+  background: #fff;
+  padding: 14px 16px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.planLeft {
   text-align: left;
 }
 
-th { background: #f1f3f6; font-weight: 700; }
-tr:nth-child(even) td { background: #fafafa; }
+.planStats {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.planBtns {
+  display: flex;
+  gap: 8px;
+}
+
+.select { background: #007bff; color: #fff; }
+.delete { background: #6c757d; color: #fff; }
+
+table {
+  margin: 10px auto;
+  width: 800px;
+  max-width: 95%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+th { background: #f2f4f8; }
+
+.danger {
+  margin: 20px 0;
+}
+
+.danger button {
+  background: #444;
+  color: #fff;
+}
